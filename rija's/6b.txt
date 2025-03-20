@@ -1,0 +1,100 @@
+INCLUDE Irvine32.inc  
+
+.data  
+    ewords byte "each other eager eagerly v2car eagerness foxy eagle-eyed earache", 0  
+    msgOffset byte "Offset: ", 0  
+    newline byte 10, 0      ; New line character  
+    buffer byte 5 dup(0)    ; Buffer to hold offset as string (max 4 digits + null terminator)  
+
+.code  
+main PROC  
+    mov ebx, OFFSET ewords  ; Point EBX to the start of ewords  
+    mov esi, ebx             ; ESI will traverse the array  
+    xor ecx, ecx             ; Clear ECX to count offsets  
+
+next_word:  
+    ; Save the current position in EDX (offset)  
+    mov edx, esi  
+
+    ; Find the length of the current word  
+    call find_word_length  
+
+    ; Check if the first character of the word is 'e' or 'E'  
+    cmp byte ptr [esi], 'e'  
+    je skip_word  
+    cmp byte ptr [esi], 'E'  
+    je skip_word  
+
+    ; Convert EDX (current offset) to string  
+    call convert_to_string  
+
+    ; Print the "Offset: " message  
+    WriteString OFFSET msgOffset  
+
+    ; Print the numeric offset string  
+    WriteString OFFSET buffer  
+
+    ; Print a newline  
+    WriteString OFFSET newline  
+
+skip_word:  
+    ; Move ESI to the next word (skip the current word + 1 null terminator)  
+    add esi, eax             ; Move to the end of the current word  
+    cmp byte ptr [esi], 0    ; Check if the next character is null  
+    je done  
+
+    inc esi                  ; Move past the null terminator to the next character  
+    jmp next_word  
+
+done:  
+    exit  
+main ENDP  
+
+; Function to find the length of the current word  
+; Sets EAX to the length  
+find_word_length PROC  
+    xor eax, eax             ; Clear EAX (length counter)  
+
+find_length_loop:  
+    cmp byte ptr [esi + eax], 0  ; Check for null terminator  
+    je done_length                ; If zero, done  
+    cmp byte ptr [esi + eax], ' '  ; Check for space  
+    je done_length                ; If space, done  
+    inc eax                       ; Increment length counter  
+    jmp find_length_loop  
+done_length:  
+    ret  
+find_word_length ENDP  
+
+; Convert EDX (offset) to string in buffer  
+convert_to_string PROC  
+    mov ecx, 10                 ; Base 10 for conversion  
+    mov edi, buffer             ; Point EDI to buffer  
+    add edi, 4                  ; Move to the end of the buffer for insertion  
+    mov byte ptr [edi], 0       ; Null-terminate the string  
+
+.convert_loop:  
+    dec edi                     ; Move back in the buffer  
+    xor edx, edx                ; Clear EDX for division  
+    mov eax, edx                ; Move offset to EAX for division  
+    div ecx                     ; Divide EAX by 10, result in EAX, remainder in EDX  
+    add dl, '0'                 ; Convert remainder to ASCII  
+    mov byte ptr [edi], dl      ; Store ASCII character in buffer  
+    test eax, eax                ; Check if EAX is zero  
+    jnz .convert_loop           ; Loop until EAX is zero  
+
+    ; Move the string to the start of the buffer  
+    lea esi, [edi + 1]          ; ESI points to the first valid character  
+    mov edi, buffer             ; EDI points to buffer start  
+move_string:  
+    mov al, [esi]               ; Move character from ESI to EDI  
+    mov [edi], al  
+    inc edi                     ; Increment EDI  
+    inc esi                     ; Increment ESI  
+    test al, al                 ; Check for null terminator  
+    jnz move_string             ; Loop until null terminator  
+
+    ret  
+convert_to_string ENDP  
+
+END main

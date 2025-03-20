@@ -1,0 +1,49 @@
+
+//CHECKING IF A GIVEN NUM IS PRIME
+!
+TITLE My First Program (Text.asm)
+INCLUDE Irvine32.inc
+
+.data
+msg BYTE "Enter num: ",0
+num DWORD ?
+p BYTE "Prime",0
+np BYTE "Not Prime",0
+
+.code
+main PROC
+mov edx,offset msg
+call WriteString
+call ReadInt
+mov num,eax  
+
+mov ecx,num
+mov ebx,2
+
+
+check_div:
+mov edx,0
+div ebx  ;ans stored in ebx
+cmp edx,0  ;if zero
+je not_prime
+inc ebx
+cmp ebx, eax         ; compare ebx with the number
+jl check_div         ; if ebx < eax, continue checking
+
+;if loop completes num is prime warna zero ajata so we would have reached not prime
+prime:
+mov edx,offset p
+call WriteString
+call crlf
+jmp done
+
+not_prime:
+mov edx,offset np
+call WriteString
+
+done:
+call dumpRegs
+exit
+main ENDP
+END main
+!

@@ -1,0 +1,126 @@
+TITLE My First Program (Text.asm)
+INCLUDE Irvine32.inc
+
+.data
+    star BYTE "*",0
+    space BYTE " ",0
+    rows dword 5
+.code
+main PROC
+
+mov ecx, 1
+mov esi, 1
+mov edi, 5
+L1:
+     push ecx
+     mov ecx, edi
+    i:
+    mov edx, offset space ;prints 5 spaces
+     call writestring
+     loop i
+
+     mov ecx, esi    ;for single star
+    j:
+    mov edx, offset star
+     call writestring
+     loop j
+
+    pop ecx
+    call crlf
+loop L1
+
+mov ecx, 4
+mov eax, 1
+mov esi, 2
+Loop1:
+   push ecx
+   mov ebx ,ecx
+   mov ecx, ebx
+   ll1:
+      mov edx, offset space    ;space equal to row
+      call writestring
+   loop ll1
+
+   mov ecx, eax            ;star after space
+   l2:
+      mov edx, offset star
+      call writestring
+   loop l2
+
+   mov ecx, esi    ;b/w space
+   l3:
+      mov edx, offset space
+      call writestring
+   loop l3
+
+   mov ecx, eax       ;printing star again
+   l4:
+      mov edx, offset star
+      call writestring
+   loop l4
+
+   call crlf
+   pop ecx
+   add esi, 2   ;increasing b/w space by 2
+loop Loop1
+
+mov ecx, 3
+mov eax, 1
+mov esi, 2
+mov ebx, 6   ;spaces 
+L11:
+   push ecx
+   mov ecx, esi
+
+   L22:
+      mov edx, offset space
+      call writestring
+   loop L22
+
+   mov ecx, eax
+   L33:
+      mov edx, offset star
+      call writestring
+   loop L33
+
+   mov ecx, ebx
+   L44:
+      mov edx, offset space
+      call writestring
+   loop L44
+
+   mov ecx, eax
+   L55:
+      mov edx, offset star
+      call writestring
+   loop L55
+
+   call crlf
+   pop ecx
+   add esi, 1
+   sub ebx, 2
+loop L11
+
+mov ecx, 1
+mov esi, 1
+mov edi, 5
+
+LLL1:
+    push ecx
+    mov ecx, edi
+    LLL2:
+    mov edx, offset space
+     call writestring
+     loop LLL2
+     mov ecx, esi
+    LLL3:
+    mov edx, offset star
+     call writestring
+     loop LLL3
+    pop ecx
+    call crlf
+loop LLL1
+call dumpregs
+exit
+main ENDP
+END main

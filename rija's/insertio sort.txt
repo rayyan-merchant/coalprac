@@ -1,0 +1,99 @@
+TITLE My First Program (Test.asm)
+INCLUDE Irvine32.inc
+
+.data
+numberofdata DWORD 6         ; Number of elements in the array
+array DWORD 6 DUP(?)         ; Array to store user input values
+promptInput BYTE "Enter data:", 0
+promptOutput BYTE "Sorted output:", 0
+temp DWORD ?
+key DWORD ?
+j DWORD ?
+
+.code
+main PROC
+    mov edx, OFFSET promptInput
+    call writestring
+    call crlf
+
+    call InputArray           ; Read user input into the array
+    call _insertionSort       ; Sort the array using Insertion Sort
+
+    mov edx, OFFSET promptOutput
+    call writestring
+    call crlf
+
+    call PrintArray           ; Print the sorted array
+
+    exit
+main ENDP
+
+; Procedure to input elements into the array
+InputArray PROC uses ecx esi
+    mov ecx, numberofdata      ; Set loop counter to number of elements
+    mov esi, 0                 
+
+InputLoop:
+    call readdec               ; Read a decimal input from the user
+    mov array[esi], eax        ; Store input in the array
+    add esi, TYPE array        
+    loop InputLoop             ; Repeat for each element
+    ret
+InputArray ENDP
+
+; Procedure to print elements of the array
+PrintArray PROC uses ecx eax esi
+    mov ecx, numberofdata      ; Set loop counter to number of elements
+    mov esi, 0                 
+
+PrintLoop:
+    mov eax, array[esi]        ; Load current array element
+    call writedec              ; Print the value in eax
+    call crlf                  ; Print a newline
+    add esi, TYPE array       
+    loop PrintLoop             ; Repeat for each element
+    ret
+PrintArray ENDP
+
+; Procedure to sort the array using Insertion Sort algorithm
+_insertionSort PROC uses esi ecx eax ebx edi edx
+    mov ecx, numberofdata      ; Load number of elements
+    mov esi, OFFSET array      ; Load the address of the array
+    mov eax, 1                 ; Initialize loop variable i (0-based indexing)
+
+forLoop:
+    cmp eax, ecx               ; Check if i < numberofdata
+    jge EndSort                ; Exit loop if i >= numberofdata
+
+    mov edx, eax               ; Load i into edx
+    mov edi, edx               ; Save i as j for inner loop
+    mov ebx, [esi + edx * 4]   ; key = array[i]
+    mov key, ebx               ; Store key in memory
+
+whileLoop:
+    cmp edi, 0                 ; Check if j > 0
+    jle PlaceKey               ; If j <= 0, place key
+
+    mov edx, edi               ; Calculate (j - 1)
+    dec edx
+    mov ebx, [esi + edx * 4]   ; Load array[j - 1]
+
+    cmp ebx, key               ; Compare array[j - 1] and key
+    jle PlaceKey               ; If array[j - 1] <= key, place key
+
+    mov [esi + edi * 4], ebx   ; Shift array[j - 1] to array[j]
+    dec edi                    ; Decrement j
+    jmp whileLoop              ; Repeat while loop
+
+PlaceKey:
+    mov ebx, key               ; Load key into ebx
+    mov [esi + edi * 4], ebx   ; Place key in array[j]
+
+    inc eax                    ; Increment i
+    jmp forLoop                ; Repeat outer loop
+
+EndSort:
+    ret
+_insertionSort ENDP
+
+END main

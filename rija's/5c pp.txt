@@ -1,0 +1,45 @@
+; Define variables
+DATA SEGMENT
+    Data1 DW 0FFFFh       ; Example input data (16-bit WORD)
+    Day    DW ?           ; To store Day
+    Month  DW ?           ; To store Month
+    Year   DW ?           ; To store Year
+    Temperature DW ?      ; To store Temperature
+    Pressure DW ?         ; To store Pressure
+DATA ENDS
+
+CODE SEGMENT
+START:
+    ; Extract Day (Bits 0–4)
+    MOV AX, Data1
+    AND AX, 00011111B         ; Mask the lower 5 bits
+    MOV Day, AX               ; Store result in Day variable
+
+    ; Extract Month (Bits 5–8)
+    MOV AX, Data1
+    AND AX, 000011110000B     ; Mask bits 5–8
+    SHR AX, 5                 ; Shift right by 5
+    MOV Month, AX             ; Store result in Month variable
+
+    ; Extract Year (Bits 9–15)
+    MOV AX, Data1
+    AND AX, 111111100000000B  ; Mask bits 9–15
+    SHR AX, 9                 ; Shift right by 9
+    ADD AX, 1980              ; Add 1980 (relative year)
+    MOV Year, AX              ; Store result in Year variable
+
+    ; Extract Temperature (Bits 16–22)
+    MOV AX, Data1
+    AND AX, 1111111000000000B ; Mask bits 16–22
+    SHR AX, 16                ; Shift right by 16
+    MOV Temperature, AX       ; Store result in Temperature variable
+
+    ; Extract Pressure (Bits 23–31)
+    MOV AX, Data1
+    AND AX, 111111111000000000000000B ; Mask bits 23–31
+    SHR AX, 23                ; Shift right by 23
+    MOV Pressure, AX          ; Store result in Pressure variable
+
+    ; End Program
+    HLT
+CODE ENDS

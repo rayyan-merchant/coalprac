@@ -1,0 +1,58 @@
+; Assembly Language Program
+; Searches for 10 elements in ArraySearchValues in ArrayValues using Irvine32
+
+INCLUDE Irvine32.inc
+
+.data
+    ArrayValues DWORD 500 DUP(?) ; 500 random unsorted elements
+    ArraySearchValues DWORD 10 DUP(?) ; 10 elements to search
+    Results DWORD 10 DUP(0) ; To store results (1 if found, 0 otherwise)
+    SearchCount DWORD 10 ; Number of elements to search
+
+.code
+main PROC
+    mov ecx, 10            ; Number of elements in ArraySearchValues
+    lea esi, ArraySearchValues ; Address of ArraySearchValues
+    lea edi, Results        ; Address of Results array
+
+SearchLoop:
+    mov eax, [esi]         ; Load current search value from ArraySearchValues
+    call SearchInArray     ; Search the value in ArrayValues
+    mov [edi], al          ; Store the result (1 if found, 0 otherwise) in Results
+    add esi, 4             ; Move to the next search value
+    add edi, 4             ; Move to the next result slot
+    loop SearchLoop        ; Repeat for all search values
+
+    call DumpArray         ; Display Results array
+    exit
+main ENDP
+
+; Subroutine: SearchInArray
+; Input: EAX = value to search
+; Output: AL = 1 if found, 0 otherwise
+SearchInArray PROC
+    push esi
+    push edi
+    push ecx
+
+    mov ecx, 500           ; Number of elements in ArrayValues
+    lea edi, ArrayValues   ; Address of ArrayValues
+    cld                    ; Clear direction flag
+    mov al, 0              ; Default result is 0 (not found)
+    
+SearchLoopArray:
+    repe scasd             ; Search EAX in ArrayValues using string primitive
+    jne NotFound           ; If not found, jump
+    mov al, 1              ; If found, set result to 1
+    jmp DoneSearch
+
+NotFound:
+    ; No action, AL remains 0
+DoneSearch:
+    pop ecx
+    pop edi
+    pop esi
+    ret
+SearchInArray ENDP
+
+END main

@@ -1,0 +1,158 @@
+TITLE My First Program (Text.asm)
+INCLUDE Irvine32.inc
+
+.data
+    star BYTE "*", 0
+    space BYTE " ", 0
+    n DWORD ?
+    input BYTE "Enter the maximum number of stars: ", 0
+
+.code
+    main PROC
+    mov edx, OFFSET input
+    call WriteString
+    call readDec
+    mov n, eax
+    
+    mov ecx, n
+    mov eax, 1
+
+    L1:
+        push ecx
+        mov ebx, ecx
+        mov ecx, ebx
+        
+        L2: 
+           mov edx, OFFSET space
+           call WriteString
+        loop L2
+
+        mov ecx, eax
+        L3:
+            mov edx, OFFSET star
+            call WriteString
+            mov edx, OFFSET space
+            call WriteString
+        loop L3
+
+    inc eax      
+    call crlf
+    pop ecx
+    loop L1 ;upper done
+
+    dec n
+    mov ecx, n
+    mov eax, 2
+    L4:
+        mov ebx, ecx
+        push ecx
+        mov ecx, eax
+        L5:
+            mov edx, OFFSET space
+            call WriteString
+        loop L5
+        inc eax
+        mov ecx, ebx
+  L6:
+       mov edx, OFFSET star
+       call WriteString
+       mov edx, OFFSET space
+       call WriteString
+ loop L6
+
+   call crlf
+   pop ecx
+   loop L4
+exit                
+main ENDP
+END main
+
+//TRIANGLE
+TITLE My First Program (Text.asm)
+INCLUDE Irvine32.inc
+
+.data
+    rows DWORD 0
+    num DWORD 0
+    j DWORD 0
+    star BYTE "*",0
+    space BYTE " ",0
+    prompt1 BYTE "Enter number of rows = "
+
+.code
+main PROC
+
+mov edx, OFFSET prompt1
+call writestring
+call ReadInt
+mov rows, eax
+add eax, rows
+dec eax
+mov num, eax
+
+mov ecx, rows
+dec ecx
+outerloop:
+    cmp ecx, 0
+    je loop3
+    mov ebx, ecx
+    innerloop1:
+        mov edx, OFFSET space
+        call writestring
+    loop innerloop1
+    mov ecx, ebx
+    mov edx, OFFSET star
+    call writestring
+
+    mov eax, num
+    mov j, eax
+    sub j, 2
+    sub j, ecx
+    sub j, ecx
+    cmp j, 0
+    jg print_space
+
+rest1:
+    mov eax, rows
+    dec eax
+    cmp ebx, eax
+    jne print_star
+rest2:
+    call crlf
+    mov ecx, ebx
+loop outerloop
+jmp loop3
+
+print_star:
+    mov edx, OFFSET star
+    call writestring
+    jmp rest2
+
+print_space:
+    mov edx, OFFSET space
+    call writestring
+    dec j
+    cmp j, 0
+    jne print_space
+    je rest1
+
+mov ecx, rows
+add ecx, rows
+
+loop3:
+    cmp num, 0
+    jle end_program
+    mov edx, OFFSET star
+    call writestring
+    mov edx, OFFSET space
+    call writestring
+    sub num, 2
+    jmp loop3
+    call crlf
+loop loop3
+
+end_program:
+    call DumpRegs
+    exit
+main ENDP
+END main
