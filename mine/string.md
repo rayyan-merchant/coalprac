@@ -185,4 +185,43 @@ END main
 
 ---
 
-### 💡 **Want more Assembly programs? Let me know! 🚀**
+
+
+
+
+2️⃣ Convert Integer to ASCII
+✅ Input: 456 → Output: "456"
+
+```
+INCLUDE Irvine32.inc
+
+.data
+    number DWORD 456      ; Integer to convert
+    buffer BYTE 12 DUP(0) ; Buffer for ASCII string
+
+.code
+main PROC
+    mov eax, number       ; Load number into EAX
+    mov ecx, 10          ; Base 10 for division
+    lea edi, buffer+11   ; Start at end of buffer (for right alignment)
+    mov byte ptr [edi], 0 ; Null terminator
+
+convert_loop:
+    dec edi
+    mov edx, 0           ; Clear EDX before division
+    div ecx              ; EAX = EAX / 10, remainder in EDX
+
+    add dl, '0'          ; Convert remainder to ASCII
+    mov [edi], dl        ; Store in buffer
+
+    test eax, eax        ; Check if quotient is 0
+    jnz convert_loop
+
+    mov edx, edi         ; Load buffer address into EDX
+    call WriteString     ; Print the converted ASCII string
+    call CrLf
+
+    exit
+main ENDP
+END main
+```
