@@ -109,7 +109,12 @@ END main
 
 ---
 
-### Solution 4: 3. Write a program which contains a procedure named LocalSquare . The procedure must declare a local variable. Initialize this variable by taking an input value from the user and then display its square. Use ENTER & LEAVE instructions to allocate and de-allocate the local variable. 
+### Solution 4: Write a program to take 4 input numbers from the users. Then make two procedures
+CheckPrime and LargestPrime. The program should first check if a given number is a
+prime number or not. If all of the input numbers are prime numbers then the program
+should call the procedure LargestPrime.
+CheckPrime: This procedure tests if a number is prime or not
+LargestPrime: This procedure finds and displays the largest of the four prime numbers.
 ```assembly
 INCLUDE Irvine32.inc
 
