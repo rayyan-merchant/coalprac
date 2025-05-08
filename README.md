@@ -140,3 +140,147 @@ In this structure:
 * **Conditional jumps** (e.g., `jne`, `je`, `jg`) are used to execute code only if specific conditions are met based on the flags set by previous instructions.
 
 
+In C, you often see conditions with logical operators like **AND** (`&&`), **OR** (`||`), and **NOT** (`!`). These logical operators allow you to combine multiple conditions into a single conditional expression.
+
+In assembly, we don't have built-in logical operators like `&&` or `||`, but we can replicate the behavior using basic bitwise operations (`AND`, `OR`, `XOR`) and conditional jumps. Here's how you can handle **AND**, **OR**, and **NOT** in assembly:
+
+### 1. **AND (`&&` in C)**:
+
+In C, the logical AND (`&&`) operator checks if both conditions are true. If both conditions are true, the result is `true`, otherwise `false`.
+
+In assembly, you perform an **AND** operation between two values (or registers) to determine if both conditions are true.
+
+#### C Example:
+
+```c
+if (a && b) {
+    // Both a and b must be true for this block to execute
+}
+```
+
+#### Assembly Equivalent:
+
+```asm
+mov eax, a      ; Load a into eax
+test eax, eax   ; Test if a is non-zero (if true)
+jz  done        ; Jump to done if a is zero (false)
+
+mov ebx, b      ; Load b into ebx
+test ebx, ebx   ; Test if b is non-zero (if true)
+jz  done        ; Jump to done if b is zero (false)
+
+; Code here runs if both a and b are true
+done:
+```
+
+* The `test` instruction performs a bitwise **AND** and sets the flags based on the result.
+* The `jz` (jump if zero) instruction ensures the code block is only executed if both conditions are true.
+
+---
+
+### 2. **OR (`||` in C)**:
+
+In C, the logical OR (`||`) operator checks if **at least one condition is true**. If either condition is true, the result is `true`, otherwise `false`.
+
+In assembly, you perform an **OR** operation between two values (or registers) to check if at least one of the conditions is true.
+
+#### C Example:
+
+```c
+if (a || b) {
+    // This block runs if either a or b is true
+}
+```
+
+#### Assembly Equivalent:
+
+```asm
+mov eax, a      ; Load a into eax
+test eax, eax   ; Test if a is non-zero
+jnz  done       ; Jump to done if a is true (non-zero)
+
+mov ebx, b      ; Load b into ebx
+test ebx, ebx   ; Test if b is non-zero
+jnz  done       ; Jump to done if b is true (non-zero)
+
+; Code here runs if both a and b are false
+done:
+```
+
+* The `test` instruction checks each variable.
+* The `jnz` (jump if not zero) ensures that the code block is executed if **either `a` or `b` is true**.
+
+---
+
+### 3. **NOT (`!` in C)**:
+
+In C, the logical NOT (`!`) operator negates a condition. If the condition is `true`, it becomes `false`, and if it's `false`, it becomes `true`.
+
+In assembly, the **NOT** operation can be performed using the **`not`** instruction, which inverts the bits of a value.
+
+#### C Example:
+
+```c
+if (!a) {
+    // This block runs if a is false (zero)
+}
+```
+
+#### Assembly Equivalent:
+
+```asm
+mov eax, a      ; Load a into eax
+test eax, eax   ; Test if a is non-zero
+jz  done        ; Jump to done if a is zero (false)
+
+; Code here runs if a is zero (false)
+done:
+```
+
+* The `test` instruction checks if `a` is zero or non-zero.
+* The `jz` (jump if zero) ensures that the block executes if **`a` is false**.
+
+---
+
+### Combining AND, OR, and NOT:
+
+To combine these operations in assembly, you can use multiple conditions and jump instructions.
+
+#### Example (C):
+
+```c
+if (a && (b || c)) {
+    // This block runs if a is true and either b or c is true
+}
+```
+
+#### Assembly Equivalent:
+
+```asm
+mov eax, a      ; Load a into eax
+test eax, eax   ; Test if a is non-zero
+jz  done        ; Jump to done if a is zero (false)
+
+; Check if b or c is true
+mov ebx, b      ; Load b into ebx
+test ebx, ebx   ; Test if b is non-zero
+jnz  done       ; Jump to done if b is true (non-zero)
+
+mov ecx, c      ; Load c into ecx
+test ecx, ecx   ; Test if c is non-zero
+jnz  done       ; Jump to done if c is true (non-zero)
+
+; Code here runs if a is true and either b or c is true
+done:
+```
+
+---
+
+### Summary of Logical Operations in Assembly:
+
+* **AND (`&&`)**: Use `test` with `jz` to check if both conditions are true.
+* **OR (`||`)**: Use `test` with `jnz` to check if at least one condition is true.
+* **NOT (`!`)**: Use `test` with `jz` to check if a value is zero (false).
+
+In assembly, we typically use the **`test`** instruction (which does a bitwise **AND** and updates the flags) and jump instructions like **`jz`** (jump if zero) or **`jnz`** (jump if not zero) to replicate logical operations.
+
